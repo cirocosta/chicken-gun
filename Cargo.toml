@@ -3,6 +3,8 @@ name = "cg"
 version = "0.1.0"
 authors = ["Ciro S. Costa <cscosta@pivotal.io>"]
 edition = "2018"
+description = "Throwing chickens into the system"
 
 [dependencies]
-rand = "0.3.14"
+clap = "2.0"
+num_cpus = "1.0"
