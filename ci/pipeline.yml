@@ -1,0 +1,28 @@
+resources:
+  - name: repository
+    type: git
+    source:
+      uri: https://((github-token))@github.com/cirocosta/chicken-gun
+
+  - name: container-image
+    type: registry-image
+    source:
+      repository: cirocosta/chicken-gun
+      username: ((docker-username))
+      password: ((docker-password))
+
+
+jobs:
+  - name: build
+    public: true
+    serial: true
+    plan:
+      - get: repository
+        trigger: true
+      - task: build-image
+        privileged: true
+        file: repository/ci/tasks/build-image.yml
+      - put: container-image
+        inputs: [image]
+        get_params: {format: oci}
+        params: {image: image/image.tar}
