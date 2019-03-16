@@ -1,8 +1,15 @@
-FROM rust:1.33
+FROM rust:1.33 AS base
 
-WORKDIR /usr/src/myapp
-COPY . .
+	RUN rustup target add x86_64-unknown-linux-musl
 
-RUN cargo install --path .
+	WORKDIR /usr/src/myapp
+	COPY . .
 
-CMD ["cg"]
+	RUN cargo build --release --target x86_64-unknown-linux-musl
+
+
+FROM alpine
+
+	COPY --from=base /usr/src/myapp/target/x86_64-unknown-linux-musl/release/cg /usr/local/bin/cg
+
+
