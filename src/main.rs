@@ -40,7 +40,9 @@ fn main() {
         .get_matches();
 
     match matches.subcommand() {
-        ("cpu", Some(m)) => cg::cpu::exercise(value_t!(m, "threads", usize).unwrap()),
+        ("cpu", Some(m)) => {
+            cg::cpu::exercise(value_t!(m, "threads", usize).unwrap());
+        }
 
         ("memory", Some(m)) => {
             run_memory(
