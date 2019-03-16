@@ -3,11 +3,31 @@ extern crate clap;
 extern crate cg;
 
 use clap::{App, AppSettings, Arg, SubCommand};
+use std::io::prelude::*;
+use std::{fs, path, process};
+
+fn write_pid_to_file(filepath: &str) {
+    let path = path::Path::new(filepath);
+    let mut file = match fs::File::create(&path) {
+        Err(why) => panic!("couldn't create {}: {}", path.display(), why),
+        Ok(file) => file,
+    };
+
+    if let Err(e) = file.write_all(process::id().to_string().as_bytes()) {
+        panic!("couldn't write pid to file {}: {}", path.display(), e);
+    };
+}
 
 fn main() {
     let matches = App::new("chicken-gun")
         .version(env!("CARGO_PKG_VERSION"))
         .about(env!("CARGO_PKG_DESCRIPTION"))
+        .arg(
+            Arg::with_name("pid")
+                .default_value("/tmp/cg.pid")
+                .short("p")
+                .help("file to write the PID of the current execution to"),
+        )
         .setting(AppSettings::SubcommandRequiredElseHelp)
         .subcommand(
             SubCommand::with_name("cpu")
@@ -34,6 +54,8 @@ fn main() {
                 ),
         )
         .get_matches();
+
+    write_pid_to_file(matches.value_of("pid").unwrap());
 
     match matches.subcommand() {
         ("cpu", Some(m)) => {
