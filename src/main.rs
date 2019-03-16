@@ -9,7 +9,7 @@ use std::{process, thread};
 fn run(matches: ArgMatches) -> Result<(), String> {
     match matches.subcommand() {
         ("user-cpu", Some(m)) => run_user_cpu(m),
-        ("system-cpu", Some(m)) => run_system_cpu(m),
+        ("memory", Some(m)) => run_memory(m),
         _ => Ok(()),
     }
 }
@@ -29,7 +29,7 @@ fn run_user_cpu(matches: &ArgMatches) -> Result<(), String> {
     Ok(())
 }
 
-fn run_system_cpu(_matches: &ArgMatches) -> Result<(), String> {
+fn run_memory(_matches: &ArgMatches) -> Result<(), String> {
     Ok(())
 }
 
@@ -48,7 +48,18 @@ fn main() {
                 ),
         )
         .subcommand(
-            SubCommand::with_name("system-cpu").about("drive system cpu utilization to the top"),
+            SubCommand::with_name("memory")
+                .about("tries to allocate a lot of memory")
+                .arg(
+                    Arg::with_name("bs")
+                        .default_value("1024")
+                        .help("size of the blocks to allocate"),
+                )
+                .arg(
+                    Arg::with_name("count")
+                        .default_value("1024")
+                        .help("number of times to allocate blocks"),
+                ),
         )
         .get_matches();
 
