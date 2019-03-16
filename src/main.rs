@@ -1,3 +1,10 @@
+//! A program for driving utilization and starvation of
+//! specific system resources.
+//!
+//! Each subcommand implements a specific type of stress to
+//! put on a specific subsystem - see `cg --help` for a list
+//! of those commands.
+
 #[macro_use]
 extern crate clap;
 extern crate cg;
