@@ -4,10 +4,6 @@ extern crate cg;
 
 use clap::{App, AppSettings, Arg, SubCommand};
 
-fn run_memory(_block_size: usize, _count: usize) {
-    println!("yay!");
-}
-
 fn main() {
     let matches = App::new("chicken-gun")
         .version(env!("CARGO_PKG_VERSION"))
@@ -45,7 +41,7 @@ fn main() {
         }
 
         ("memory", Some(m)) => {
-            run_memory(
+            cg::memory::exercise(
                 value_t!(m, "bs", usize).unwrap(),
                 value_t!(m, "count", usize).unwrap(),
             );
