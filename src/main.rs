@@ -1,44 +1,20 @@
 #[macro_use]
-
 extern crate clap;
-extern crate num_cpus;
+extern crate cg;
 
-use clap::{App, Arg, ArgMatches, SubCommand};
-use std::{process, thread};
+use clap::{App, AppSettings, Arg, SubCommand};
 
-fn run(matches: ArgMatches) -> Result<(), String> {
-    match matches.subcommand() {
-        ("user-cpu", Some(m)) => run_user_cpu(m),
-        ("memory", Some(m)) => run_memory(m),
-        _ => Ok(()),
-    }
-}
-
-fn run_user_cpu(matches: &ArgMatches) -> Result<(), String> {
-    let thread_num = value_t!(matches, "threads", usize).unwrap();
-    let mut child_threads = vec![];
-
-    for _ in 0..thread_num {
-        child_threads.push(thread::spawn(|| loop {}))
-    }
-
-    for child in child_threads {
-        let _ = child.join();
-    }
-
-    Ok(())
-}
-
-fn run_memory(_matches: &ArgMatches) -> Result<(), String> {
-    Ok(())
+fn run_memory(_block_size: usize, _count: usize) {
+    println!("yay!");
 }
 
 fn main() {
     let matches = App::new("chicken-gun")
         .version(env!("CARGO_PKG_VERSION"))
         .about(env!("CARGO_PKG_DESCRIPTION"))
+        .setting(AppSettings::SubcommandRequiredElseHelp)
         .subcommand(
-            SubCommand::with_name("user-cpu")
+            SubCommand::with_name("cpu")
                 .about("drive user cpu utilization to the top")
                 .arg(
                     Arg::with_name("threads")
@@ -63,8 +39,18 @@ fn main() {
         )
         .get_matches();
 
-    if let Err(e) = run(matches) {
-        println!("error: {}", e);
-        process::exit(1);
+    match matches.subcommand() {
+        ("cpu", Some(m)) => cg::cpu::exercise(value_t!(m, "threads", usize).unwrap()),
+
+        ("memory", Some(m)) => {
+            run_memory(
+                value_t!(m, "bs", usize).unwrap(),
+                value_t!(m, "count", usize).unwrap(),
+            );
+        }
+
+        ("", None) => println!("No subcommand specified. Check --help."),
+
+        _ => unreachable!(),
     }
 }
