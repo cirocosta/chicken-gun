@@ -11,7 +11,7 @@ extern crate cg;
 
 use clap::{App, AppSettings, Arg, SubCommand};
 use std::io::prelude::*;
-use std::{fs, path, process};
+use std::{fs, path, process, time};
 
 fn write_pid_to_file(filepath: &str) {
     let path = path::Path::new(filepath);
@@ -33,6 +33,7 @@ fn main() {
             Arg::with_name("pid")
                 .default_value("/tmp/cg.pid")
                 .short("p")
+                .long("pid")
                 .help("file to write the PID of the current execution to"),
         )
         .setting(AppSettings::SubcommandRequiredElseHelp)
@@ -43,6 +44,7 @@ fn main() {
                     Arg::with_name("threads")
                         .default_value("4")
                         .short("t")
+                        .long("threads")
                         .help("number of threads to use"),
                 ),
         )
@@ -51,13 +53,38 @@ fn main() {
                 .about("tries to allocate a lot of memory")
                 .arg(
                     Arg::with_name("bs")
+                        .long("bs")
                         .default_value("1024")
                         .help("size of the blocks to allocate"),
                 )
                 .arg(
                     Arg::with_name("count")
+                        .long("count")
                         .default_value("1024")
                         .help("number of times to allocate blocks"),
+                ),
+        )
+        .subcommand(
+            SubCommand::with_name("memory-wave")
+                .about("keeps allocating and deallocating memory in intervals")
+                .arg(
+                    Arg::with_name("bs")
+                        .long("bs")
+                        .default_value("1024")
+                        .help("size of the blocks to allocate"),
+                )
+                .arg(
+                    Arg::with_name("count")
+                        .long("count")
+                        .default_value("1024")
+                        .help("number of times to allocate blocks"),
+                )
+                .arg(
+                    Arg::with_name("interval")
+                        .default_value("100")
+                        .short("i")
+                        .long("interval")
+                        .help("time to wait before allocs and deallocs (ms)"),
                 ),
         )
         .get_matches();
@@ -73,6 +100,14 @@ fn main() {
             cg::memory::exercise(
                 value_t!(m, "bs", usize).unwrap(),
                 value_t!(m, "count", usize).unwrap(),
+            );
+        }
+
+        ("memory-wave", Some(m)) => {
+            cg::memory::exercise_like_a_wave(
+                value_t!(m, "bs", usize).unwrap(),
+                value_t!(m, "count", usize).unwrap(),
+                time::Duration::from_millis(value_t!(m, "interval", u64).unwrap()),
             );
         }
 
