@@ -8,6 +8,7 @@
 #[macro_use]
 extern crate clap;
 extern crate cg;
+extern crate num_cpus;
 
 use clap::{App, AppSettings, Arg, SubCommand};
 use std::io::prelude::*;
@@ -40,6 +41,17 @@ fn main() {
         .subcommand(
             SubCommand::with_name("cpu")
                 .about("Drive user cpu utilization to the top")
+                .arg(
+                    Arg::with_name("threads")
+                        .default_value("4")
+                        .short("t")
+                        .long("threads")
+                        .help("Number of threads to use"),
+                ),
+        )
+        .subcommand(
+            SubCommand::with_name("context-switches")
+                .about("Drive context switches to the top")
                 .arg(
                     Arg::with_name("threads")
                         .default_value("4")
@@ -94,6 +106,10 @@ fn main() {
     match matches.subcommand() {
         ("cpu", Some(m)) => {
             cg::cpu::exercise(value_t!(m, "threads", usize).unwrap());
+        }
+
+        ("context-switches", Some(m)) => {
+            cg::cpu::context_switches(value_t!(m, "threads", usize).unwrap(), num_cpus::get());
         }
 
         ("memory", Some(m)) => {

@@ -19,13 +19,14 @@ FLAGS:
     -V, --version    Prints version information
 
 OPTIONS:
-    -p, --pid <pid>    file to write the PID of the current execution to [default: /tmp/cg.pid]
+    -p, --pid <pid>    File to write the PID of the current execution to [default: /tmp/cg.pid]
 
 SUBCOMMANDS:
-    cpu            drive user cpu utilization to the top
-    help           Prints this message or the help of the given subcommand(s)
-    memory         tries to allocate a lot of memory
-    memory-wave    keeps allocating and deallocating memory in intervals
+    context-switches    Drive context switches to the top
+    cpu                 Drive user cpu utilization to the top
+    help                Prints this message or the help of the given subcommand(s)
+    memory              Tries to allocate a lot of memory
+    memory-wave         Keeps allocating and deallocating memory in intervals
 ```
 
 ### In a container
