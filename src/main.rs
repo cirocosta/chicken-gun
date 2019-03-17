@@ -34,23 +34,23 @@ fn main() {
                 .default_value("/tmp/cg.pid")
                 .short("p")
                 .long("pid")
-                .help("file to write the PID of the current execution to"),
+                .help("File to write the PID of the current execution to"),
         )
         .setting(AppSettings::SubcommandRequiredElseHelp)
         .subcommand(
             SubCommand::with_name("cpu")
-                .about("drive user cpu utilization to the top")
+                .about("Drive user cpu utilization to the top")
                 .arg(
                     Arg::with_name("threads")
                         .default_value("4")
                         .short("t")
                         .long("threads")
-                        .help("number of threads to use"),
+                        .help("Number of threads to use"),
                 ),
         )
         .subcommand(
             SubCommand::with_name("memory")
-                .about("tries to allocate a lot of memory")
+                .about("Tries to allocate a lot of memory")
                 .arg(
                     Arg::with_name("bs")
                         .long("bs")
@@ -61,30 +61,30 @@ fn main() {
                     Arg::with_name("count")
                         .long("count")
                         .default_value("1024")
-                        .help("number of times to allocate blocks"),
+                        .help("Number of times to allocate blocks"),
                 ),
         )
         .subcommand(
             SubCommand::with_name("memory-wave")
-                .about("keeps allocating and deallocating memory in intervals")
+                .about("Keeps allocating and deallocating memory in intervals")
                 .arg(
                     Arg::with_name("bs")
                         .long("bs")
                         .default_value("1024")
-                        .help("size of the blocks to allocate"),
+                        .help("Size of the blocks to allocate"),
                 )
                 .arg(
                     Arg::with_name("count")
                         .long("count")
                         .default_value("1024")
-                        .help("number of times to allocate blocks"),
+                        .help("Number of times to allocate blocks"),
                 )
                 .arg(
                     Arg::with_name("interval")
                         .default_value("100")
                         .short("i")
                         .long("interval")
-                        .help("time to wait before allocs and deallocs (ms)"),
+                        .help("Time to wait before allocs and deallocs (ms)"),
                 ),
         )
         .get_matches();
