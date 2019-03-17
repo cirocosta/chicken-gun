@@ -111,6 +111,27 @@ perf script --fields comm,cpu,tid | awk '/cg/{print $2 $3}'
 ```
 
 
+#### `pids`
+
+Creates `n` different processes under the same process group as the parent `cg` initiated by `cg pids`.
+
+```sh
+cg pids -n 5
+
+# check the process group
+pstree -p $(cat /tmp/cg.pid)
+cg(2016)─┬─exe(2017)
+         ├─exe(2018)
+         ├─exe(2019)
+         ├─exe(2020)
+         └─exe(2021)
+```
+
+Under the hood, `cg pids` creates child processes from its own image (`/proc/self/exe`), specifying the hidden `cg sleep` - one that just sleeps forever - as their command.
+
+This has the effect of having several processes (not just threads) under the same process group as `cg`.
+
+
 ### LICENSE
 
 MIT - See [`./LICENSE`](./license).

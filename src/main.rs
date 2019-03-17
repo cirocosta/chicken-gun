@@ -39,6 +39,22 @@ fn main() {
         )
         .setting(AppSettings::SubcommandRequiredElseHelp)
         .subcommand(
+            SubCommand::with_name("sleep")
+                .setting(AppSettings::Hidden)
+                .about("Does nothing - just sleeps until a signal arrives"),
+        )
+        .subcommand(
+            SubCommand::with_name("pids")
+                .about("Create a bunch of processes")
+                .arg(
+                    Arg::with_name("number")
+                        .default_value("30")
+                        .short("n")
+                        .long("number")
+                        .help("Number of processes to create"),
+                ),
+        )
+        .subcommand(
             SubCommand::with_name("cpu")
                 .about("Drive user cpu utilization to the top")
                 .arg(
@@ -101,11 +117,21 @@ fn main() {
         )
         .get_matches();
 
-    write_pid_to_file(matches.value_of("pid").unwrap());
+    if !matches.is_present("sleep") {
+        write_pid_to_file(matches.value_of("pid").unwrap());
+    }
 
     match matches.subcommand() {
+        ("sleep", Some(_m)) => {
+            std::thread::sleep(std::time::Duration::from_secs(1 << 32));
+        }
+
         ("cpu", Some(m)) => {
             cg::cpu::exercise(value_t!(m, "threads", usize).unwrap());
+        }
+
+        ("pids", Some(m)) => {
+            cg::fork::exercise(value_t!(m, "number", usize).unwrap());
         }
 
         ("context-switches", Some(m)) => {
