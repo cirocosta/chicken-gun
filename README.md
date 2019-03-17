@@ -101,7 +101,14 @@ voluntary_ctxt_switches:	242
 nonvoluntary_ctxt_switches:	1590412
 ```
 
-Now, if we focus on one of those threads, an track on which CPU they've been running at the moment that
+If we're even more curious and want to know in which CPUs the threads were when they ran, we can then look at a tailored output of `perf script`:
+
+```sh
+# filtering the system-wide samples, look at only those
+# for the `cg` command, then output the corresponding `cpu`
+# where each `tid` ran.
+perf script --fields comm,cpu,tid | awk '/cg/{print $2 $3}'
+```
 
 
 ### LICENSE
