@@ -27,3 +27,19 @@ SUBCOMMANDS:
     memory         tries to allocate a lot of memory
     memory-wave    keeps allocating and deallocating memory in intervals
 ```
+
+### In a container
+
+Just like in a regular bare-metal or virtual machine, `cg` can run in containerized environments too.
+
+A container image can be found on DockerHub: [cirocosta/chicken-gun](https://hub.docker.com/r/cirocosta/chicken-gun).
+
+```sh
+docker run cirocosta/chicken-gun cpu --threads 4
+```
+
+
+### LICENSE
+
+MIT - See [`./LICENSE`](./license).
+
