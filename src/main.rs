@@ -44,6 +44,24 @@ fn main() {
                 .about("Does nothing - just sleeps until a signal arrives"),
         )
         .subcommand(
+            SubCommand::with_name("files-open")
+                .about("Creates and opens a bunch of files")
+                .arg(
+                    Arg::with_name("number")
+                        .default_value("30")
+                        .short("n")
+                        .long("number")
+                        .help("Number of processes to create"),
+                )
+                .arg(
+                    Arg::with_name("directory")
+                        .default_value("./")
+                        .short("d")
+                        .long("directory")
+                        .help("Where to create the files to open"),
+                ),
+        )
+        .subcommand(
             SubCommand::with_name("pids")
                 .about("Create a bunch of processes")
                 .arg(
@@ -124,6 +142,13 @@ fn main() {
     match matches.subcommand() {
         ("sleep", Some(_m)) => {
             std::thread::sleep(std::time::Duration::from_secs(1 << 32));
+        }
+
+        ("files-open", Some(m)) => {
+            cg::fs::exercise_files_open(
+                value_t!(m, "number", usize).unwrap(),
+                &value_t!(m, "directory", String).unwrap(),
+            );
         }
 
         ("cpu", Some(m)) => {
