@@ -132,6 +132,51 @@ Under the hood, `cg pids` creates child processes from its own image (`/proc/sel
 This has the effect of having several processes (not just threads) under the same process group as `cg`.
 
 
+#### `files-open`
+
+By creating `n` files under a particular directory and keeping them open, this scenario can be used to verify either that, for instance, per-process limits are really enforced.
+
+For example:
+
+```sh
+# check out what the current limit for the current process is
+cat /proc/$$/limits
+Limit                Soft Limit     Hard Limit    Units
+...
+Max resident set     unlimited      unlimited     bytes
+Max open files       1024           1048576       files
+Max locked memory    16777216       16777216      bytes
+...
+
+# configure the current process to have a limit
+# of 20 open files
+ulimit -n 20
+
+
+# verify that we indeed changes the limit for the current process
+cat /proc/$$/limits
+Limit                Soft Limit     Hard Limit    Units
+...
+Max resident set     unlimited      unlimited     bytes
+Max open files       20             20            files
+Max locked memory    16777216       16777216      bytes
+...
+
+# see that we can't go past that limit:
+cg files-open -d /tmp -n 30
+thread 'main' panicked at 'failed to create /tmp/17: Too many open files (os error 24)', src/fs.rs:18:25
+```
+
+In order to check what the current number of open files we have, we can inspect the process' `/proc/$pid/fd`:
+
+```sh
+# create and open a number of open files that we're allowed to handle
+cg files-open -d /tmp -n 10
+ls /proc/$(cat /tmp/cg.pid)/fd | wc -l
+13	# < 10 files + stdin, stdout, and stderr.
+```
+
+
 ### LICENSE
 
 MIT - See [`./LICENSE`](./license).
