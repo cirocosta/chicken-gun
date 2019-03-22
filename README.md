@@ -176,6 +176,31 @@ ls /proc/$(cat /tmp/cg.pid)/fd | wc -l
 13	# < 10 files + stdin, stdout, and stderr.
 ```
 
+#### `tcp-transmitter` and `tcp-receiver`
+
+Respectively, sends/receives bytes from/to files as quickly as possible using as few userspace time as possible (leverages [`splice`](http://man7.org/linux/man-pages/man2/splice.2.html) heavily).
+
+```sh
+# in one terminal
+cg tcp-receiver -a 127.0.0.1:1337
+
+# in another terminal
+cg tcp-transmitter -a 127.0.0.1:1337
+
+# in yet another terminal
+sar -n DEV 1
+21:23:14        IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s   %ifutil
+21:23:15       enp0s3      4.00      4.00      0.23      0.40      0.00      0.00      0.00      0.00
+21:23:15           lo 240386.00 240386.00 5263101.63 5263101.63      0.00      0.00      0.00      0.00
+21:23:15       enp0s8      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+21:23:15      docker0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+
+top
+...
+%Cpu(s):  1.5 us, 31.5 sy,  0.0 ni, 60.0 id,  0.0 wa, ...
+	 *------* *-----*
+```
+
 
 ### LICENSE
 
