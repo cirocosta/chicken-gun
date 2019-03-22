@@ -1,5 +1,6 @@
 use std::process;
 
+#[cfg(target_os = "linux")]
 pub fn exercise(procs_num: usize) {
     let mut children = Vec::with_capacity(procs_num);
 

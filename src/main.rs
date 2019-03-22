@@ -44,6 +44,42 @@ fn main() {
                 .about("Does nothing - just sleeps until a signal arrives"),
         )
         .subcommand(
+            SubCommand::with_name("tcp-receiver")
+                .about("Sets up a TCP server that writes the contents received to a file")
+                .arg(
+                    Arg::with_name("address")
+                        .default_value("127.0.0.1:1337")
+                        .short("a")
+                        .long("address")
+                        .help("Address to bind to"),
+                )
+                .arg(
+                    Arg::with_name("destination")
+                        .default_value("/dev/null")
+                        .short("d")
+                        .long("destination")
+                        .help("File to write to"),
+                ),
+        )
+        .subcommand(
+            SubCommand::with_name("tcp-transmitter")
+                .about("Sets up a TCP client that sends a file to the server")
+                .arg(
+                    Arg::with_name("address")
+                        .default_value("127.0.0.1:1337")
+                        .short("a")
+                        .long("address")
+                        .help("Address to connect to"),
+                )
+                .arg(
+                    Arg::with_name("source")
+                        .default_value("/dev/zero")
+                        .short("s")
+                        .long("source")
+                        .help("File to read contents from"),
+                ),
+        )
+        .subcommand(
             SubCommand::with_name("files-open")
                 .about("Creates and opens a bunch of files")
                 .arg(
@@ -160,6 +196,20 @@ fn main() {
     match matches.subcommand() {
         ("sleep", Some(_m)) => {
             std::thread::sleep(std::time::Duration::from_secs(1 << 32));
+        }
+
+        ("tcp-receiver", Some(m)) => {
+            cg::net::tcp_receiver(
+                &value_t!(m, "address", String).unwrap(),
+                &value_t!(m, "output", String).unwrap(),
+            );
+        }
+
+        ("tcp-transmitter", Some(m)) => {
+            cg::net::tcp_transmitter(
+                &value_t!(m, "address", String).unwrap(),
+                &value_t!(m, "output", String).unwrap(),
+            );
         }
 
         ("files-open", Some(m)) => {

@@ -65,10 +65,9 @@ fn consistent_writes_to_file(filepath: &str, mbs: usize) {
 
     loop {
         for _ in 0..writes {
-            match file.write_all(chunk) {
-                Err(why) => panic!("failed to write chunk to file - {}", why),
-                Ok(file) => (),
-            };
+            if let Err(err) = file.write_all(chunk) {
+                panic!("failed to write chunk to file - {}", err);
+            }
         }
 
         if let Err(err) = file.sync_all() {
