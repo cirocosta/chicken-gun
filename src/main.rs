@@ -201,14 +201,14 @@ fn main() {
         ("tcp-receiver", Some(m)) => {
             cg::net::tcp_receiver(
                 &value_t!(m, "address", String).unwrap(),
-                &value_t!(m, "output", String).unwrap(),
+                &value_t!(m, "destination", String).unwrap(),
             );
         }
 
         ("tcp-transmitter", Some(m)) => {
             cg::net::tcp_transmitter(
                 &value_t!(m, "address", String).unwrap(),
-                &value_t!(m, "output", String).unwrap(),
+                &value_t!(m, "source", String).unwrap(),
             );
         }
 
