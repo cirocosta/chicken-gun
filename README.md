@@ -29,15 +29,20 @@ SUBCOMMANDS:
     memory-wave         Keeps allocating and deallocating memory in intervals
 ```
 
-### In a container
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-Just like in a regular bare-metal or virtual machine, `cg` can run in containerized environments too.
 
-A container image can be found on DockerHub: [cirocosta/chicken-gun](https://hub.docker.com/r/cirocosta/chicken-gun).
+- [Scenarios](#scenarios)
+  - [`context-switches`](#context-switches)
+  - [`pids`](#pids)
+  - [`files-open`](#files-open)
+  - [`tcp-transmitter` and `tcp-receiver`](#tcp-transmitter-and-tcp-receiver)
+- [In a container](#in-a-container)
+- [LICENSE](#license)
 
-```sh
-docker run cirocosta/chicken-gun cpu --threads 4
-```
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 
 ### Scenarios
 
@@ -201,6 +206,16 @@ top
 	 *------* *-----*
 ```
 
+
+### In a container
+
+Just like in a regular bare-metal or virtual machine, `cg` can run in containerized environments too.
+
+A container image can be found on DockerHub: [cirocosta/chicken-gun](https://hub.docker.com/r/cirocosta/chicken-gun).
+
+```sh
+docker run cirocosta/chicken-gun cpu --threads 4
+```
 
 ### LICENSE
 
