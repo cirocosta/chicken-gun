@@ -1,4 +1,4 @@
-## chicken-gun 
+# chicken-gun 
 
 > A **chicken gun** is a large-diameter, compressed-air cannon used to fire dead chickens at aircraft components in order to simulate high-speed bird strikes during the aircraft's flight. (source: [*Wikipedia*](https://en.wikipedia.org/wiki/Chicken_gun))
 
@@ -13,6 +13,7 @@ Here you can find `cg`, a tool aimed at providing very targetted load at specifi
 
 
 - [Scenarios](#scenarios)
+  - [`cpu`](#cpu)
   - [`context-switches`](#context-switches)
   - [`pids`](#pids)
   - [`files-open`](#files-open)
@@ -23,9 +24,9 @@ Here you can find `cg`, a tool aimed at providing very targetted load at specifi
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-### Scenarios
+## Scenarios
 
-#### `cpu`
+### `cpu`
 
 Exercises the CPU time spent on userspace code by creating `n` threads that each keep running a busy loop indefinitely.
 
@@ -66,7 +67,7 @@ References:
 - [The `/proc` filesystem](https://www.kernel.org/doc/Documentation/filesystems/proc.txt)
 
 
-#### `context-switches`
+### `context-switches`
 
 In this scenario, threads get their execution swapped in `n` cores all the time, constantly.
 
@@ -136,7 +137,7 @@ perf script --fields comm,cpu,tid | awk '/cg/{print $2 $3}'
 ```
 
 
-#### `pids`
+### `pids`
 
 Creates `n` different processes under the same process group as the parent `cg` initiated by `cg pids`.
 
@@ -157,7 +158,7 @@ Under the hood, `cg pids` creates child processes from its own image (`/proc/sel
 This has the effect of having several processes (not just threads) under the same process group as `cg`.
 
 
-#### `files-open`
+### `files-open`
 
 By creating `n` files under a particular directory and keeping them open, this scenario can be used to verify either that, for instance, per-process limits are really enforced.
 
@@ -201,7 +202,7 @@ ls /proc/$(cat /tmp/cg.pid)/fd | wc -l
 13	# < 10 files + stdin, stdout, and stderr.
 ```
 
-#### `tcp-transmitter` and `tcp-receiver`
+### `tcp-transmitter` and `tcp-receiver`
 
 Respectively, sends/receives bytes from/to files as quickly as possible using as few userspace time as possible (leverages [`splice`](http://man7.org/linux/man-pages/man2/splice.2.html) heavily).
 
@@ -227,7 +228,7 @@ top
 ```
 
 
-### In a container
+## In a container
 
 Just like in a regular bare-metal or virtual machine, `cg` can run in containerized environments too.
 
@@ -237,7 +238,7 @@ A container image can be found on DockerHub: [cirocosta/chicken-gun](https://hub
 docker run cirocosta/chicken-gun cpu --threads 4
 ```
 
-### LICENSE
+## LICENSE
 
 MIT - See [`./LICENSE`](./license).
 
