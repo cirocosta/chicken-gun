@@ -1,6 +1,9 @@
 //! Filesystem related operations.
 
+use nix::fcntl;
+use nix::unistd::pipe;
 use std::io::prelude::*;
+use std::os::unix::io::AsRawFd;
 use std::{fs, path, thread, time};
 
 /// Creates and keep open a bunch of files.
@@ -26,6 +29,26 @@ pub fn exercise_files_open(num: usize, directory: &str) {
     thread::sleep(time::Duration::from_secs(1 << 16))
 }
 
+/// Copies a file from `src` to `dst` with minimal userspace
+/// demands.
+pub fn copy_file(src: &str, dst: &str) {
+    let dst_file = match fs::OpenOptions::new()
+        .create(true)
+        .write(true)
+        .open(path::Path::new(dst))
+    {
+        Err(why) => panic!("couldn't open|create dst file - {}", why),
+        Ok(f) => f,
+    };
+
+    let src_file = match fs::File::open(path::Path::new(src)) {
+        Err(why) => panic!("couldn't source file - {}", why),
+        Ok(f) => f,
+    };
+
+    in_kernel_copy(&src_file, &dst_file);
+}
+
 /// Consistently performs writes to a file.
 ///
 /// per thread:
@@ -49,11 +72,6 @@ pub fn exercise_constant_write_throughput(num_files: usize, directory: &str) {
 const KB: usize = 1 << 10;
 const MB: usize = 1 << 20;
 
-///     create file
-///     allocate in-memory chunk,
-///     for write in writes:
-///       write the chunk
-///     sync to disk
 fn consistent_writes_to_file(filepath: &str, mbs: usize) {
     let chunk = &[0; KB];
     let writes: usize = mbs * MB / KB;
@@ -77,5 +95,39 @@ fn consistent_writes_to_file(filepath: &str, mbs: usize) {
         if let Err(err) = file.seek(std::io::SeekFrom::Start(0)) {
             panic!("failed to seek - {}", err);
         }
+    }
+}
+
+/// Redirects all of the contents that can be read
+/// from the stream into the Linux null device in order
+/// to quickly consume all that is written to it.
+pub fn in_kernel_copy(src: &AsRawFd, dst: &AsRawFd) {
+    let (rd, wr) = pipe().unwrap();
+    let bufsize = fcntl::fcntl(rd, fcntl::F_GETPIPE_SZ).unwrap() as usize;
+
+    loop {
+        let res = fcntl::splice(
+            src.as_raw_fd(),
+            None,
+            wr,
+            None,
+            bufsize,
+            fcntl::SpliceFFlags::empty(),
+        )
+        .unwrap();
+
+        if res == 0 {
+            break;
+        }
+
+        let _res = fcntl::splice(
+            rd,
+            None,
+            dst.as_raw_fd(),
+            None,
+            bufsize,
+            fcntl::SpliceFFlags::empty(),
+        )
+        .unwrap();
     }
 }

@@ -44,6 +44,24 @@ fn main() {
                 .about("Does nothing - just sleeps until a signal arrives"),
         )
         .subcommand(
+            SubCommand::with_name("file-copy")
+                .about("Sets up a TCP server that writes the contents received to a file")
+                .arg(
+                    Arg::with_name("source")
+                        .default_value("/dev/zero")
+                        .short("s")
+                        .long("source")
+                        .help("File to read from"),
+                )
+                .arg(
+                    Arg::with_name("destination")
+                        .default_value("/dev/null")
+                        .short("d")
+                        .long("destination")
+                        .help("File to write to"),
+                ),
+        )
+        .subcommand(
             SubCommand::with_name("tcp-receiver")
                 .about("Sets up a TCP server that writes the contents received to a file")
                 .arg(
@@ -234,6 +252,13 @@ fn main() {
             cg::fs::exercise_constant_write_throughput(
                 value_t!(m, "number", usize).unwrap(),
                 &value_t!(m, "directory", String).unwrap(),
+            );
+        }
+
+        ("file-copy", Some(m)) => {
+            cg::fs::copy_file(
+                &value_t!(m, "source", String).unwrap(),
+                &value_t!(m, "destination", String).unwrap(),
             );
         }
 
