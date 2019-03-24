@@ -31,6 +31,11 @@ Here you can find `cg`, a tool aimed at providing very targetted load at specifi
 
 Exercises the CPU time spent on userspace code by creating `n` threads that each keep running a busy loop indefinitely.
 
+```sh
+# run four threads with busyloops in them.
+cg cpu --threads 4
+```
+
 Once the scenario runs, we can look at CPU utilization metrics to verify that we're really exercising the CPUs, but first, let's see where we can gather that info from:
 
 ```sh
@@ -60,7 +65,6 @@ Where each number measures the number of jiffies (100HZ on x86) that the cpu saw
 | system | processes executing in kernel mode |
 | idle | idle |
 | iowait | time during which a particular CPU was idle and there was at least one outstanding disk I/O operation requested by a task scheduled on that CPU (at the time it generated that I/O request) |
-
 
 References:
 
@@ -136,6 +140,10 @@ If we're even more curious and want to know in which CPUs the threads were when 
 # where each `tid` ran.
 perf script --fields comm,cpu,tid | awk '/cg/{print $2 $3}'
 ```
+
+Something interesting that happens when exercising context switches is that we can't just see the overhead associated with them by looking only at `user` and `system` CPU utilization, despite the fact that a `1 - idle` reveals that our CPUs are busy with such activity.
+
+![](./assets/context-switches-cpu-util.png)
 
 
 ### `pids`
