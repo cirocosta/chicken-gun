@@ -25,6 +25,47 @@ Here you can find `cg`, a tool aimed at providing very targetted load at specifi
 
 ### Scenarios
 
+#### `cpu`
+
+Exercises the CPU time spent on userspace code by creating `n` threads that each keep running a busy loop indefinitely.
+
+Once the scenario runs, we can look at CPU utilization metrics to verify that we're really exercising the CPUs, but first, let's see where we can gather that info from:
+
+```sh
+cat /proc/stat
+cpu  15336 204 1036 1949794 774 0 133 0 0 0  #  -- aggregate over all cpus
+cpu0 5135  42  370  649932  248 0 21  0 0 0
+cpu1 5106  162 315  649920  275 0 102 0 0 0
+#     |    |   |    |       |   |  |  | | |
+#     |    |   |    |       |   |  |  | | *guest_nice
+#     |    |   |    |       |   |  |  | *guest
+#     |    |   |    |       |   |  |  *steal
+#     |    |   |    |       |   |  *softirq
+#     |    |   |    |       |   *irq
+#     |    |   |    |       *iowait
+#     |    |   |    *idle
+#     |    |   *system
+#     |    *nice
+#     *user    
+```
+
+Where each number measures the number of jiffies (100HZ on x86) that the cpu saw itself in that mode since the time that the system booted.
+
+| metric | description |
+| ------ | ----------- |
+| user   | normal processes executing in user mode |
+| nice   | `nice`d processes executing in user mode |
+| system | processes executing in kernel mode |
+| idle | idle |
+| iowait | time during which a particular CPU was idle and there was at least one outstanding disk I/O operation requested by a task scheduled on that CPU (at the time it generated that I/O request) |
+
+
+References:
+
+- [The precise meaning of I/O wait time in Linux](http://veithen.io/2013/11/18/iowait-linux.html)
+- [The `/proc` filesystem](https://www.kernel.org/doc/Documentation/filesystems/proc.txt)
+
+
 #### `context-switches`
 
 In this scenario, threads get their execution swapped in `n` cores all the time, constantly.
