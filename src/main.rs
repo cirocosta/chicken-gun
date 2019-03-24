@@ -127,6 +127,17 @@ fn main() {
                 ),
         )
         .subcommand(
+            SubCommand::with_name("threads")
+                .about("Create a bunch of threads")
+                .arg(
+                    Arg::with_name("number")
+                        .default_value("30")
+                        .short("n")
+                        .long("number")
+                        .help("Number of processes to create"),
+                ),
+        )
+        .subcommand(
             SubCommand::with_name("cpu")
                 .about("Drive user cpu utilization to the top")
                 .arg(
@@ -231,7 +242,11 @@ fn main() {
         }
 
         ("pids", Some(m)) => {
-            cg::fork::exercise(value_t!(m, "number", usize).unwrap());
+            cg::cpu::exercise_forks(value_t!(m, "number", usize).unwrap());
+        }
+
+        ("threads", Some(m)) => {
+            cg::cpu::exercise_thread_creation(value_t!(m, "number", usize).unwrap());
         }
 
         ("context-switches", Some(m)) => {

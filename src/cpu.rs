@@ -2,7 +2,40 @@ extern crate libc;
 extern crate rand;
 
 use rand::Rng;
+use std::process;
 use std::thread;
+
+#[cfg(target_os = "linux")]
+pub fn exercise_forks(procs_num: usize) {
+    let mut children = Vec::with_capacity(procs_num);
+
+    for _ in 0..procs_num {
+        children.push(
+            process::Command::new("/proc/self/exe")
+                .arg("sleep")
+                .spawn()
+                .expect("failed to execute child"),
+        );
+    }
+
+    for mut child in children {
+        child.wait().expect("failed waiting for child");
+    }
+}
+
+pub fn exercise_thread_creation(thread_num: usize) {
+    let mut child_threads = Vec::with_capacity(thread_num);
+
+    for _ in 0..thread_num {
+        child_threads.push(thread::spawn(|| {
+            thread::sleep(std::time::Duration::from_secs(1 << 32));
+        }));
+    }
+
+    for child in child_threads {
+        let _ = child.join();
+    }
+}
 
 /// Puts `thread_num` threads to work as hard as they can without
 /// preferences in terms of which CPU to run.
