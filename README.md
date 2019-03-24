@@ -7,6 +7,7 @@ Here you can find `cg`, a tool aimed at providing very targetted load at specifi
 - what happens when specific problematic scenarios occur, and
 - if we're properly collecting telemetry from our systems.
 
+**Table of contents**
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
