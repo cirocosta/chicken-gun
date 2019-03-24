@@ -166,6 +166,12 @@ Under the hood, `cg pids` creates child processes from its own image (`/proc/sel
 
 This has the effect of having several processes (not just threads) under the same process group as `cg`.
 
+Despite the fact that Linux does not provide us with a single file containing the exact number of processes created, we can rely on what [`getdents(2)`](http://man7.org/linux/man-pages/man2/getdents.2.html) on `/proc` returns:
+
+```sh
+ls /proc/ | awk '/^[0-9]+$/'
+```
+
 
 ### `files-open`
 
