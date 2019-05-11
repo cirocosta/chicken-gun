@@ -1,0 +1,35 @@
+# Default values for cg.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: cirocosta/chicken-gun
+  tag: latest
+  pullPolicy: Always
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 1337
+  
+# arguments to be supplied to the `cg` command.
+#
+# when using a `cg` command that requires listening on a port,
+# make sure to make that port match the one specified in the
+# service.
+#
+args:
+  - tcp-receiver
+  - --address=0.0.0.0:1337
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
