@@ -28,6 +28,16 @@ args:
 
 resources: {}
 
+
+addtionalVolumes: []
+
+additionalVolumeMounts: []
+
+persistence:
+  enabled: false
+  storageClassName: "standard"
+  size: 5Gi
+
 nodeSelector: {}
 
 tolerations: []
