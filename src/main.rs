@@ -44,14 +44,26 @@ fn main() {
                 .about("Does nothing - just sleeps until a signal arrives"),
         )
         .subcommand(
+            SubCommand::with_name("page-cache")
+                .about("Exercises the page cache")
+                .arg(
+                    Arg::with_name("directory")
+                        .help("File to write to")
+                        .long("directory")
+                        .required(true)
+                        .short("d")
+                        .takes_value(true),
+                ),
+        )
+        .subcommand(
             SubCommand::with_name("file-copy")
                 .about("Sets up a TCP server that writes the contents received to a file")
                 .arg(
                     Arg::with_name("source")
                         .default_value("/dev/zero")
-                        .short("s")
+                        .help("File to read from")
                         .long("source")
-                        .help("File to read from"),
+                        .short("s"),
                 )
                 .arg(
                     Arg::with_name("destination")
@@ -225,6 +237,10 @@ fn main() {
     match matches.subcommand() {
         ("sleep", Some(_m)) => {
             std::thread::sleep(std::time::Duration::from_secs(1 << 32));
+        }
+
+        ("page-cache", Some(m)) => {
+            cg::page_cache::exercise(&path::Path::new(&value_t!(m, "directory", String).unwrap()));
         }
 
         ("tcp-receiver", Some(m)) => {

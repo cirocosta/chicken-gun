@@ -1,5 +1,8 @@
 IMAGE_NAME ?= cirocosta/chicken-gun
 
+build:
+	cargo install --path=. --force
+
 image:
 	docker build -t $(IMAGE_NAME) .
 
