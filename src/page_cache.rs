@@ -16,6 +16,8 @@ pub fn exercise (dir: &Path) {
 ///
 const BUF_SIZE: usize = 4096;
 
+/// Recursively reads the contents of all of the files under a particular directory.
+///
 fn read_files_from_dir(dir: &Path) -> usize {
     if !dir.is_dir() {
         panic!("{} is not a directory", dir.display())
@@ -26,11 +28,11 @@ fn read_files_from_dir(dir: &Path) -> usize {
     for entry in std::fs::read_dir(dir).unwrap() {
         let path = entry.unwrap().path();
 
-        if path.is_dir () {
-            continue
+        if path.is_dir() {
+            acc += read_files_from_dir(&path);
+        } else {
+            acc += read_file(&path);
         }
-
-        acc += read_and_discard(&path);
     }
 
     acc
@@ -38,7 +40,7 @@ fn read_files_from_dir(dir: &Path) -> usize {
 
 /// Reads all of the contents of a file, discarding what was read.
 ///
-fn read_and_discard(filepath: &Path) -> usize {
+fn read_file(filepath: &Path) -> usize {
     let mut f = std::fs::File::open(filepath).unwrap();
     let mut buf = vec![0u8; BUF_SIZE];
     let mut acc: usize = 0;
