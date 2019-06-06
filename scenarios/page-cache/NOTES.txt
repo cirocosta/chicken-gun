@@ -1,0 +1,19 @@
+verifying the "strabo case"
+
+
+	1. get the use of page-cache pretty high
+
+		running `setup.sh`
+
+
+	2. try to get a lot memory allocated
+
+		cg memory
+
+
+	3. observe the cost associated with the internals of `shrinker`
+		
+		`bpftrace
+		
+
+
