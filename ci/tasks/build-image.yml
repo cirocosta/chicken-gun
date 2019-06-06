@@ -3,10 +3,10 @@ platform: linux
 
 image_resource:
   type: registry-image
-  source: {repository: concourse/builder}
+  source: {repository: concourse/builder-task}
 
 params:
-  REPOSITORY: cirocosta/pageok
+  REPOSITORY: cirocosta/chicken-gun
   TAG: latest
   CONTEXT: repository
 
@@ -15,8 +15,5 @@ inputs:
 
 outputs:
 - name: image
-
-caches:
-- path: cache
 
 run: {path: build}
