@@ -2,6 +2,7 @@
 
 set -o errexit
 
+readonly COUNT="${COUNT:-300}"
 readonly GROUP_NAME="testcg"
 
 main () {
@@ -22,7 +23,7 @@ main () {
 }
 
 delete () {
-	for i in $(seq 1 10); do
+	for i in $(seq 1 $COUNT); do
 		delete_cgroup $i
 	done
 
@@ -32,7 +33,7 @@ delete () {
 create () {
 	mkdir -p /sys/fs/cgroup/memory/$GROUP_NAME
 
-	for i in $(seq 1 10); do
+	for i in $(seq 1 $COUNT); do
 		create_cgroup $i
 	done
 }
