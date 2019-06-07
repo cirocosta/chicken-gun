@@ -15,5 +15,37 @@ verifying the "strabo case"
 		
 		`bpftrace
 		
+		@[
+		    shrink_slab+1
+		    do_try_to_free_pages+201
+		    try_to_free_pages+238
+		    __alloc_pages_slowpath+1020
+		    __alloc_pages_nodemask+611
+		    alloc_pages_vma+136
+		    handle_pte_fault+947
+		    __handle_mm_fault+1144
+		    handle_mm_fault+177
+		    __do_page_fault+592
+		    do_page_fault+46
+		    page_fault+69
+		]: 603
+		@[
+		    shrink_slab+1
+		    kswapd+692
+		    kthread+289
+		    ret_from_fork+53
+		]: 27038
+
+		---
+
+		in `shrink_slab` (https://elixir.bootlin.com/linux/v4.15/source/mm/vmscan.c#L460):
+			iterates over each `shrinker` in the list of shrinkers
+
+		the list of `shrinker`s gets new entries by calling `register-shrinker`
+			
+
+
+			
+
 
 

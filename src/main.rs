@@ -12,7 +12,7 @@ extern crate num_cpus;
 
 use clap::{App, AppSettings, Arg, SubCommand};
 use std::io::prelude::*;
-use std::{fs, path, process, time};
+use std::{fs, path, process, time, thread};
 
 fn write_pid_to_file(filepath: &str) {
     let path = path::Path::new(filepath);
@@ -203,6 +203,12 @@ fn main() {
                         .long("count")
                         .default_value("1024")
                         .help("Number of times to allocate blocks"),
+                )
+                .arg(
+                    Arg::with_name("sleep")
+                        .long("sleep")
+                        .default_value("true")
+                        .help("Whether the process should sleep after running"),
                 ),
         )
         .subcommand(
@@ -299,6 +305,14 @@ fn main() {
                 value_t!(m, "bs", usize).unwrap(),
                 value_t!(m, "count", usize).unwrap(),
             );
+
+            let should_sleep = value_t!(m, "sleep", bool).unwrap();
+            if !should_sleep {
+                return
+            }
+
+            println!("sleeping");
+            thread::sleep(time::Duration::from_secs(60 * 10));
         }
 
         ("memory-wave", Some(m)) => {

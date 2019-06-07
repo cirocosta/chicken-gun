@@ -15,18 +15,12 @@ use std::{mem, thread, time};
 ///
 /// ```
 ///
-/// Once the memory is allocated, `exercise` puts the thread
-/// to sleep until interrupted.
-///
 pub fn exercise(block_size: usize, count: usize) {
     let mut buf = Vec::with_capacity(block_size * count);
 
     for _ in 0..count {
         buf.append(&mut vec![true; block_size]);
     }
-
-    println!("sleeping");
-    thread::sleep(time::Duration::from_secs(60 * 10));
 }
 
 /// Just like `exercise`, it allocates `count * block_size` number
